@@ -6,7 +6,8 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "prisma:dev:deploy": "prisma migrate deploy",
+    "prisma:generate": "prisma generate",
+    "prisma:deploy": "prisma migrate deploy",
     "db:dev:rm": "docker compose rm dev-db -s -f -v",
     "db:dev:up": "docker compose up dev-db -d",
     "db:dev:restart": "yarn db:dev:rm && yarn db:dev:up && yarn prisma:dev:deploy",
@@ -20,6 +21,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
+    "prestart:prod": "yarn prisma:deploy",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "pretest": "yarn db:test:restart",
@@ -35,6 +37,7 @@
     "@nestjs/jwt": "^9.0.0",
     "@nestjs/passport": "^9.0.0",
     "@nestjs/platform-express": "^9.0.11",
+    "@nestjs/cli": "^9.1.3",
     "@prisma/client": "^4.3.1",
     "argon2": "^0.29.1",
     "class-transformer": "^0.5.1",
@@ -46,7 +49,6 @@
     "rxjs": "^7.5.6"
   },
   "devDependencies": {
-    "@nestjs/cli": "^9.1.3",
     "@nestjs/schematics": "^9.0.3",
     "@nestjs/testing": "^9.0.11",
     "@types/express": "^4.17.14",

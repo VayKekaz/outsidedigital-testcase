@@ -1,9 +1,9 @@
-# how to run
+# Run in docker
 
 ```shell
-yarn install
-docker compose --profile dev up
-yarn start:dev
+$ docker compose --profile prod up -d
 ```
+
+Open `http://localhost:3000/user` to verify it's working
 
 # TODO api docs

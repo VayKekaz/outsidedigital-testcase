@@ -1,8 +1,25 @@
 version: '3.9'
 services:
-  dev-db:
-    profiles: ["dev"]
-    container_name: postgres_dev
+  odt:
+    container_name: outsidedigital_backend
+    profiles: [ "prod" ]
+    build:
+      dockerfile: Dockerfile
+      context: .
+    image: odt
+    env_file:
+      - .env.prod
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    networks:
+      - postgres
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: "postgres"
+    profiles: [ "dev", "prod" ]
     image: postgres
     environment:
       POSTGRES_USER: postgres
@@ -12,13 +29,13 @@ services:
     volumes:
       - postgres:/data/postgres
     ports:
-      - "5434:5432"
+      - 5432:5432
     networks:
       - postgres
     restart: unless-stopped
 
   test-db:
-    profiles: ["test"]
+    profiles: [ "test" ]
     image: postgres
     ports:
       - 5435:5432
@@ -30,7 +47,7 @@ services:
       - postgres
 
   pgadmin:
-    profiles: ["dev"]
+    profiles: [ "dev" ]
     container_name: pgadmin_container
     image: dpage/pgadmin4
     environment:
