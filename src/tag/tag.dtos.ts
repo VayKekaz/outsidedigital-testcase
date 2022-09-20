@@ -36,7 +36,7 @@ export class CreateTagDto {
 export class EditTagDto {
   @IsString()
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiPropertyOptional()
   name: string;
 
   @IsOptional()
