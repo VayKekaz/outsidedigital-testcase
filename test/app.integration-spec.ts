@@ -5,7 +5,7 @@ import { AppModule } from '../src/app.module';
 import { Page } from '../src/pagination';
 import { PrismaService } from '../src/prisma/prisma.service';
 
-describe('App e2e', () => {
+describe('Integration tests', () => {
   let app: INestApplication;
   let prisma: PrismaService;
 

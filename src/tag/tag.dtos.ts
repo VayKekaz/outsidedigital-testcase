@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Tag, User } from '@prisma/client';
 import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { UserDto } from '../user/user.dtos';
@@ -23,18 +24,23 @@ export class TagDto {
 export class CreateTagDto {
   @IsString()
   @IsNotEmpty()
+  @ApiProperty()
   name: string;
 
   @IsOptional()
   @IsInt()
+  @ApiPropertyOptional({ default: 0 })
   sortOrder?: number = 0;
 }
+
 export class EditTagDto {
   @IsString()
   @IsNotEmpty()
+  @ApiProperty()
   name: string;
 
   @IsOptional()
   @IsInt()
+  @ApiPropertyOptional({ default: 0 })
   sortOrder?: number = 0;
 }

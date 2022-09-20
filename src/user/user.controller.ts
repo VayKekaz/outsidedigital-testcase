@@ -7,20 +7,23 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { GetUser } from '../security/security.decorators';
 import { JwtGuard } from '../security/security.jwt';
 import { EditUserDto, UserDto } from './user.dtos';
 import { UserService } from './user.service';
 
-@UseGuards(JwtGuard)
 @Controller('user')
+@UseGuards(JwtGuard)
+@ApiBearerAuth()
 export class UserController {
   constructor(private userService: UserService) {}
 
   @HttpCode(200)
   @Get()
-  getMe(@GetUser() user: User): UserDto {
+  async getMe(@GetUser('uid') uid: string): Promise<UserDto> {
+    const user = await this.userService.getByIdIncludeTags(uid);
     return new UserDto(user);
   }
 

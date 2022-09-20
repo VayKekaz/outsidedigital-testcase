@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-import { EditUserDto, UserCreationDto } from './user.dtos';
+import { EditUserDto, UserCreationDto, UserIncludedTags } from './user.dtos';
 
 @Injectable()
 export class UserService {
@@ -23,6 +23,13 @@ export class UserService {
 
   async getById(uid: string): Promise<User> {
     return this.repository.findUnique({ where: { uid } });
+  }
+
+  async getByIdIncludeTags(uid: string): Promise<UserIncludedTags> {
+    return this.repository.findUnique({
+      where: { uid },
+      include: { tags: true },
+    });
   }
 
   async getByEmail(email: string): Promise<User> {

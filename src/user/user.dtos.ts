@@ -1,9 +1,10 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Tag, User } from '@prisma/client';
 import { Exclude } from 'class-transformer';
 import { IsEmail, IsOptional, IsString } from 'class-validator';
 import { TagDto } from '../tag/tag.dtos';
 
-export type UserWithTags = User & { tags: Array<Tag> };
+export type UserIncludedTags = User & { tags: Array<Tag> };
 export type UserOptionalTags = User & { tags?: Array<Tag> };
 
 export class UserDto {
@@ -13,7 +14,6 @@ export class UserDto {
   @Exclude() passwordHash?: String;
   tags: Array<TagDto> = [];
 
-  // TODO
   constructor(model: UserOptionalTags, tags: Array<Tag> = []) {
     this.uid = model.uid;
     this.email = model.email;
@@ -35,14 +35,13 @@ export class UserCreationDto {
 }
 
 export class EditUserDto {
-  @IsOptional()
-  uid?: string;
-
   @IsEmail()
   @IsOptional()
+  @ApiPropertyOptional()
   email?: string;
 
   @IsString()
   @IsOptional()
+  @ApiPropertyOptional()
   nickname?: string;
 }

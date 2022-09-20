@@ -5,7 +5,6 @@ import {
   ForbiddenException,
   Get,
   HttpCode,
-  HttpStatus,
   Param,
   ParseIntPipe,
   Post,
@@ -14,23 +13,40 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { DefaultValuePipe } from '@nestjs/common/pipes';
+import { ApiBearerAuth, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { Page } from '../pagination';
 import { GetUser } from '../security/security.decorators';
 import { JwtGuard } from '../security/security.jwt';
 import { CreateTagDto, EditTagDto, TagDto } from './tag.dtos';
 import { TagService } from './tag.service';
 
-@UseGuards(JwtGuard)
 @Controller('tags')
+@UseGuards(JwtGuard)
+@ApiBearerAuth()
 export class TagController {
   constructor(private tagService: TagService) {}
 
-  @HttpCode(200)
   @Get()
+  @HttpCode(200)
+  @ApiQuery({
+    name: 'offset',
+    required: false,
+    schema: { default: 0, minimum: 0 },
+  })
+  @ApiQuery({
+    name: 'length',
+    required: false,
+    schema: { default: 0, minimum: 1 },
+  })
+  @ApiQuery({
+    name: 'sortBy',
+    required: false,
+    schema: { default: 'sortOrder', enum: ['sortOrder', 'name'] },
+  })
   async getPaginated(
-    @Query('offset', new DefaultValuePipe(0), ParseIntPipe) offset: number,
-    @Query('length', new DefaultValuePipe(10), ParseIntPipe) length: number,
-    @Query('sortBy', new DefaultValuePipe('sortOrder')) sort: string,
+    @Query('offset', new DefaultValuePipe(0), ParseIntPipe) offset?: number,
+    @Query('length', new DefaultValuePipe(10), ParseIntPipe) length?: number,
+    @Query('sortBy', new DefaultValuePipe('sortOrder')) sort?: string,
   ): Promise<Page<TagDto>> {
     const tags = await this.tagService.getAllIncludeCreator(
       offset,
@@ -38,8 +54,7 @@ export class TagController {
       sort,
     );
     return new Page(
-      //@ts-ignore tag.creator
-      tags.map(tag => new TagDto(tag, tag.creator)),
+      tags.map(tag => new TagDto(tag)),
       offset,
       length,
     );
@@ -62,6 +77,7 @@ export class TagController {
 
   @HttpCode(201)
   @Post('/multiple')
+  @ApiBody({ type: [CreateTagDto] })
   async createMultiple(
     @GetUser('uid') uid: string,
     @Body() dto: Array<CreateTagDto>,
